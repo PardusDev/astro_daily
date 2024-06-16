@@ -24,6 +24,7 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
                 HoroscopesCard(),
+                SizedBox(height: 30,)
               ],
             ),
           ),
