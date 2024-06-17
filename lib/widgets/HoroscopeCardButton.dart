@@ -1,3 +1,4 @@
+import 'package:astro_daily/screens/horoscope_interpretation_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../models/Horoscope.dart';
@@ -16,7 +17,9 @@ class HoroscopeCardButton extends StatelessWidget {
         return SizedBox(
           width: 160,
           child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, '/HoroscopeInterpretation');
+              },
               style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,
                   shadowColor: Colors.transparent,
