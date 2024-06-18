@@ -1,5 +1,6 @@
 import 'package:astro_daily/screens/home_screen.dart';
 import 'package:astro_daily/screens/horoscope_interpretation_screen.dart';
+import 'package:astro_daily/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -14,7 +15,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: '/',
       routes: {
-        '/': (context) => HomePage(),
+        '/': (context) => SplashScreen(),
+        '/HomePage': (context) => HomePage(),
         '/HoroscopeInterpretation': (context) => HoroscopeInterpretationPage()
       },
       theme: ThemeData(
