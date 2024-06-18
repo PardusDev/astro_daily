@@ -9,10 +9,13 @@ class APIService {
   APIService({required this.apiUrl});
 
   Future<List<Horoscope>> getHoroscopes() async {
+    print("testapi");
     final String uri = "$apiUrl/getHoroscopes";
+    print("testapi2");
     final response = await http.get(Uri.parse(uri));
-
+    print("testapi3");
     if (response.statusCode == 200) {
+      print("testapi");
       final List<dynamic> json = jsonDecode(response.body);
       return Horoscope.fromJsonList(json);
     } else {

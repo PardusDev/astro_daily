@@ -10,46 +10,51 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    APIService apiService = new APIService(apiUrl: "https://api.pardev.one/v2");
-
+    APIService apiService = new APIService(apiUrl: "http://10.0.2.2:3000");
     return Scaffold(
       backgroundColor: Color.fromRGBO(24,23,39, 1.0),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.only(top: 18.0, left: 8.0, right: 8.0),
-          child: Column(
-            children: <Widget>[
-              Center(
-                child: LayoutBuilder(
-                  builder: (BuildContext context, BoxConstraints constraints) {
-                    double imageWidth = constraints.maxWidth * 0.35;
-                    return Image.asset("assets/images/astrology_header.png", width: imageWidth, fit: BoxFit.cover);
-                  },
+          child: SingleChildScrollView(
+            physics: ScrollPhysics(),
+            child: Column(
+              children: <Widget>[
+                Center(
+                  child: LayoutBuilder(
+                    builder: (BuildContext context, BoxConstraints constraints) {
+                      double imageWidth = constraints.maxWidth * 0.35;
+                      return Image.asset("assets/images/astrology_header.png", width: imageWidth, fit: BoxFit.cover);
+                    },
+                  ),
                 ),
-              ),
-              SizedBox(height: 20,),
-              FutureBuilder<List<Horoscope>>(
-                  future: apiService.getHoroscopes(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Expanded(child: ListView.separated(
-                        itemBuilder: (context, index) => HoroscopeCardSkelton(),
-                      separatorBuilder: (context, index) => const SizedBox(height: 16),
-                      itemCount: 6,
-                    )
-                    );
-                    } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(child: Text('No data available'));
-                    } else {
-                      List<Horoscope> horoscopes = snapshot.data!;
-                      return HoroscopesCard(horoscopes: horoscopes);
+                SizedBox(height: 20,),
+                FutureBuilder<List<Horoscope>>(
+                    future: apiService.getHoroscopes(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        print("test0");
+                      return Expanded(child: ListView.separated(
+                          itemBuilder: (context, index) => HoroscopeCardSkelton(),
+                        separatorBuilder: (context, index) => const SizedBox(height: 16),
+                        itemCount: 6,
+                      )
+                      );
+                      } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Center(child: Text('No data available'));
+                      } else {
+                        print("test1");
+                        List<Horoscope> horoscopes = snapshot.data!;
+                        print("test2");
+                        return HoroscopesCard(horoscopes: horoscopes);
+                      }
                     }
-                  }
-              ),
-              SizedBox(height: 30,)
-            ],
+                ),
+                SizedBox(height: 30,)
+              ],
+            ),
           ),
         ),
       ),
