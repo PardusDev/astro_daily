@@ -34,11 +34,12 @@ class HomePage extends StatelessWidget {
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         print("test0");
-                      return Expanded(child: ListView.separated(
+                      return ListView.separated(
+                        shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) => HoroscopeCardSkelton(),
-                        separatorBuilder: (context, index) => const SizedBox(height: 16),
+                        separatorBuilder: (context, index) => const SizedBox(),
                         itemCount: 6,
-                      )
                       );
                       } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
@@ -103,14 +104,14 @@ class HoroscopeCardSkelton extends StatelessWidget {
   @override
   Widget build (BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Skelton(
             height: 180,
             width: 160,
           ),
-          SizedBox(width: 20,),
           Skelton(
             height: 180,
             width: 160,
