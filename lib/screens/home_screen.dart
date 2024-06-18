@@ -18,12 +18,13 @@ class HomePage extends StatelessWidget {
                 Center(
                   child: LayoutBuilder(
                     builder: (BuildContext context, BoxConstraints constraints) {
-                      double imageWidth = constraints.maxWidth * 0.2;
+                      double imageWidth = constraints.maxWidth * 0.35;
                       return Image.asset("assets/images/astrology_header.png", width: imageWidth, fit: BoxFit.cover);
                     },
                   ),
                 ),
-                HoroscopesCard(),
+                SizedBox(height: 20,),
+                HoroscopesCard(horoscopes: ,),
                 SizedBox(height: 30,)
               ],
             ),

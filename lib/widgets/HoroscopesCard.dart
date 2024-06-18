@@ -1,17 +1,18 @@
 import 'package:astro_daily/widgets/HoroscopeCardButton.dart';
 import 'package:flutter/material.dart';
 
-import '../utilities/Horoscopes.dart';
+import '../models/Horoscope.dart';
 
 class HoroscopesCard extends StatelessWidget {
-  const HoroscopesCard({super.key});
+  final List<Horoscope> horoscopes;
+  const HoroscopesCard({super.key, required this.horoscopes});
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       physics: NeverScrollableScrollPhysics(),
         shrinkWrap: true,
-        itemCount: (Horoscopes.length / 2).ceil(),
+        itemCount: (horoscopes.length / 2).ceil(),
         itemBuilder: (context, index) {
           final int firstIndex = index * 2;
           final int secondIndex = firstIndex + 1;
@@ -20,8 +21,8 @@ class HoroscopesCard extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                HoroscopeCardButton(horoscope: Horoscopes[firstIndex]),
-                if (secondIndex < Horoscopes.length) HoroscopeCardButton(horoscope: Horoscopes[secondIndex])
+                HoroscopeCardButton(horoscope: horoscopes[firstIndex]),
+                if (secondIndex < horoscopes.length) HoroscopeCardButton(horoscope: horoscopes[secondIndex])
               ],
             ),
           );

@@ -36,7 +36,7 @@ class HoroscopeCardButton extends StatelessWidget {
                         child: Container(
                             width: 70,
                             height: 70,
-                            child: Image.asset(horoscope.asset,
+                            child: Image.asset(horoscope.assetPath,
                             )),
                       ),
                       Text(
@@ -50,7 +50,7 @@ class HoroscopeCardButton extends StatelessWidget {
                         height: 20,
                       ),
                       Text(
-                        "(" + horoscope.dateRange.toUpperCase() + ")",
+                        "(" + horoscope.dateInterval.toUpperCase() + ")",
                         style: TextStyle(
                             color: Colors.white30,
                             fontWeight: FontWeight.w500,
