@@ -32,8 +32,10 @@ class HomePage extends StatelessWidget {
                 FutureBuilder<List<Horoscope>>(
                     future: apiService.getHoroscopes(),
                     builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        print("test0");
+                      if (snapshot.connectionState == ConnectionState.waiting ||
+                          snapshot.hasError ||
+                          !snapshot.hasData ||
+                          (snapshot.data is List && (snapshot.data as List).isEmpty)) {
                       return ListView.separated(
                         shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
@@ -41,14 +43,8 @@ class HomePage extends StatelessWidget {
                         separatorBuilder: (context, index) => const SizedBox(),
                         itemCount: 6,
                       );
-                      } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Center(child: Text('No data available'));
                       } else {
-                        print("test1");
                         List<Horoscope> horoscopes = snapshot.data!;
-                        print("test2");
                         return HoroscopesCard(horoscopes: horoscopes);
                       }
                     }

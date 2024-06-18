@@ -1,10 +1,18 @@
+import 'package:astro_daily/services/APIService.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+import '../models/Horoscope.dart';
+import '../models/HoroscopeDetails.dart';
 
 class HoroscopeInterpretationPage extends StatelessWidget {
   const HoroscopeInterpretationPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final Horoscope args = ModalRoute.of(context)!.settings.arguments as Horoscope;
+    APIService apiService = new APIService(apiUrl: "http://10.0.2.2:3000");
+
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -12,72 +20,92 @@ class HoroscopeInterpretationPage extends StatelessWidget {
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.only(top: 28.0, left: 4.0, right: 4.0),
-            child: Column(
-              children: [
-                Center(
-                  child: LayoutBuilder(
-                    builder: (BuildContext context, BoxConstraints constraints) {
-                      double imageWidth = constraints.maxWidth * 0.8;
-                      return Image.asset("assets/images/scorpio_interpretation.png", width: imageWidth, fit: BoxFit.cover,);
-                    }
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text("f", style: TextStyle(fontFamily: 'GeZodiac', fontSize: 22, color: Colors.white70),),
-                          SizedBox(width: 6,),
-                          Text("Scorpio", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.white70),)
-                        ],
-                      ),
-                      TabBar(
-                        labelColor: Colors.white70,
-                          indicatorColor: Colors.white70,
-                          dividerColor: Colors.transparent,
-                          splashFactory: NoSplash.splashFactory,
-                          overlayColor: WidgetStateProperty.resolveWith((states) => Colors.transparent),
-                          tabs: [
-                            Tab(text: "TODAY",),
-                            Tab(text: "TOMORROW",),
-                            Tab(text: "WEEKLY",)
-                          ]),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  flex: 4,
-                  child: TabBarView(
-                    children: [
-                      TodayTab(),
-                      TomorrowTab(),
-                      WeeklyTab(),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 20,),
-              ],
+            child: FutureBuilder <HoroscopeDetails>(
+              future: apiService.getHoroscopeDetails(args),
+              builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting ||
+                      snapshot.hasError ||
+                      !snapshot.hasData ||
+                      (snapshot.data is List && (snapshot.data as List).isEmpty)) {
+                    return Skelton();
+                  } else {
+                    HoroscopeDetails horoscopeDetails = snapshot.data!;
+                    return Column(
+                      children: [
+                        Center(
+                          child: LayoutBuilder(
+                              builder: (BuildContext context, BoxConstraints constraints) {
+                                double imageWidth = constraints.maxWidth * 0.8;
+                                return Image.asset("assets/images/scorpio_interpretation.png", width: imageWidth, fit: BoxFit.cover,);
+                              }
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(args.symbolChar, style: TextStyle(fontFamily: 'GeZodiac', fontSize: 22, color: Colors.white70),),
+                                  SizedBox(width: 6,),
+                                  Text(args.name, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.white70),)
+                                ],
+                              ),
+                              TabBar(
+                                  labelColor: Colors.white70,
+                                  indicatorColor: Colors.white70,
+                                  dividerColor: Colors.transparent,
+                                  splashFactory: NoSplash.splashFactory,
+                                  overlayColor: WidgetStateProperty.resolveWith((states) => Colors.transparent),
+                                  tabs: [
+                                    Tab(text: "TODAY",),
+                                    Tab(text: "TOMORROW",),
+                                    Tab(text: "WEEKLY",)
+                                  ]),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          flex: 4,
+                          child: TabBarView(
+                            children: [
+                              TodayTab(horoscopeDetails: horoscopeDetails),
+                              TomorrowTab(horoscopeDetails: horoscopeDetails),
+                              WeeklyTab(horoscopeDetails: horoscopeDetails),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 20,),
+                      ],
+                    );
+                  }
+                }
+              ),
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 }
 
 class TodayTab extends StatelessWidget {
+  final HoroscopeDetails horoscopeDetails;
+
+  TodayTab({required this.horoscopeDetails});
+
+
   @override
   Widget build(BuildContext context) {
+    String formattedDate = DateFormat('MMM dd, yyyy').format(DateTime.now());
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: SingleChildScrollView(
         child: RichText(
-          text: TextSpan(text: "Apr 24, 2020", style: TextStyle(fontSize: 16, color: Colors.white), children: const <TextSpan>[
+          text: TextSpan(text: formattedDate, style: TextStyle(fontSize: 16, color: Colors.white), children: <TextSpan>[
             TextSpan(text: " - ", style: TextStyle(fontSize: 16, color: Colors.white60)),
-            TextSpan(text: "Things aren't always as they first appear. People you thought you knew well and circumstances that you thought you understood thoroughly now seem anything but straightforward. Has the world really changed that much or has your perception altered somehow? It's time to direct this “altered” vision inward. You're ready for a change, Scorpio. Perhaps it's time to dust off that resume.", style: TextStyle(fontSize: 16, color: Colors.white60))
+            TextSpan(text: horoscopeDetails.todayText, style: TextStyle(fontSize: 16, color: Colors.white60))
           ])
         ),
       ),
@@ -86,15 +114,21 @@ class TodayTab extends StatelessWidget {
 }
 
 class TomorrowTab extends StatelessWidget {
+  final HoroscopeDetails horoscopeDetails;
+
+  TomorrowTab({required this.horoscopeDetails});
+
   @override
   Widget build(BuildContext context) {
+    String formattedDate = DateFormat('MMM dd, yyyy').format(DateTime.now().add(Duration(days: 1)));
+    
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: SingleChildScrollView(
         child: RichText(
-            text: TextSpan(text: "Apr 25, 2020", style: TextStyle(fontSize: 16, color: Colors.white), children: const <TextSpan>[
+            text: TextSpan(text: formattedDate, style: TextStyle(fontSize: 16, color: Colors.white), children: <TextSpan>[
               TextSpan(text: " - ", style: TextStyle(fontSize: 16, color: Colors.white60)),
-              TextSpan(text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque tempus eu purus sit amet sodales. Aliquam non molestie purus. Praesent vel vestibulum nunc, ut euismod nisi. Etiam lobortis nec mauris in consequat. Integer facilisis sollicitudin dolor sed efficitur. Etiam ut justo ac nulla aliquam pharetra. Phasellus varius venenatis ex eget cursus. Cras dictum sapien id massa condimentum convallis. Vestibulum ornare augue ac molestie tristique. Praesent in ex orci.", style: TextStyle(fontSize: 16, color: Colors.white60))
+              TextSpan(text: horoscopeDetails.tomorrowText, style: TextStyle(fontSize: 16, color: Colors.white60))
             ])
         ),
       ),
@@ -103,19 +137,69 @@ class TomorrowTab extends StatelessWidget {
 }
 
 class WeeklyTab extends StatelessWidget {
+  final HoroscopeDetails horoscopeDetails;
+
+  WeeklyTab({required this.horoscopeDetails});
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: SingleChildScrollView(
         child: RichText(
-            text: TextSpan(text: "Apr 19-25, 2020", style: TextStyle(fontSize: 16, color: Colors.white), children: const <TextSpan>[
+            text: TextSpan(text: "This Week", style: TextStyle(fontSize: 16, color: Colors.white), children: <TextSpan>[
               TextSpan(text: " - ", style: TextStyle(fontSize: 16, color: Colors.white60)),
-              TextSpan(text: "Mauris tempus urna at rutrum ornare. Sed non neque scelerisque, rutrum lorem convallis, mattis libero. Pellentesque lobortis in arcu dictum elementum. Proin pretium euismod nisi et fringilla. Fusce ac ligula elit. Nunc tincidunt ultrices nisi eget ullamcorper. Vestibulum eu mauris a ipsum gravida pretium. In hac habitasse platea dictumst. Aenean id mollis neque.", style: TextStyle(fontSize: 16, color: Colors.white60))
+              TextSpan(text: horoscopeDetails.weeklyText, style: TextStyle(fontSize: 16, color: Colors.white60))
             ])
         ),
       ),
     );
   }
 }
+
+// **#** SECTION of SKELTON **#**
+
+class Skelton extends StatelessWidget {
+  const Skelton({
+    Key? key, this.height, this.width,
+  }) : super(key: key);
+
+  final double? height, width;
+
+  @override
+  Widget build (BuildContext context) {
+    return Container(
+      height: height,
+      width: width,
+      padding: const EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.04),
+          borderRadius: const BorderRadius.all(Radius.circular(16))
+      ),
+      child: Column(
+        children: [
+          SizedBox(height: 12,),
+          Container(width: 360, height: 280, padding: EdgeInsets.all(24), decoration: BoxDecoration(color: Colors.white.withOpacity(0.04), borderRadius: BorderRadius.all(Radius.circular(16))),),
+          SizedBox(height: 25,),
+          Container(width: 120, height: 20, padding: EdgeInsets.all(24), decoration: BoxDecoration(color: Colors.white.withOpacity(0.04), borderRadius: BorderRadius.all(Radius.circular(16))),),
+          SizedBox(height: 30,),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Container(width: 80, height: 20, padding: EdgeInsets.all(24), decoration: BoxDecoration(color: Colors.white.withOpacity(0.04), borderRadius: BorderRadius.all(Radius.circular(16))),),
+              Container(width: 80, height: 20, padding: EdgeInsets.all(24), decoration: BoxDecoration(color: Colors.white.withOpacity(0.04), borderRadius: BorderRadius.all(Radius.circular(16))),),
+              Container(width: 80, height: 20, padding: EdgeInsets.all(24), decoration: BoxDecoration(color: Colors.white.withOpacity(0.04), borderRadius: BorderRadius.all(Radius.circular(16))),),
+            ],
+          ),
+          SizedBox(height: 18,),
+          Container(width: 360, height: 220, padding: EdgeInsets.all(24), decoration: BoxDecoration(color: Colors.white.withOpacity(0.04), borderRadius: BorderRadius.all(Radius.circular(16))),),
+        ],
+      ),
+    );
+  }
+}
+
+// **#** END of SKELTON SECTION **#**
+
+
 

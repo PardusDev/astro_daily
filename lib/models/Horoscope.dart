@@ -3,15 +3,17 @@ class Horoscope {
   final String name;
   final String dateInterval;
   final String assetPath;
+  final String symbolChar;
 
-  Horoscope({required this.name, required this.dateInterval, required this.assetPath, required this.id});
+  Horoscope({required this.name, required this.dateInterval, required this.assetPath, required this.id, required this.symbolChar});
 
   factory Horoscope.fromJson(Map<String, dynamic> json) {
     return Horoscope (
       id: json["id"],
       name: json["name"],
       dateInterval: json["dateInterval"],
-      assetPath: json["assetPath"]
+      assetPath: json["assetPath"],
+        symbolChar: json["symbolChar"]
     );
   }
 
