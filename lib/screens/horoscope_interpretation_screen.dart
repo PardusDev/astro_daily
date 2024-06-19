@@ -4,9 +4,32 @@ import 'package:intl/intl.dart';
 
 import '../models/Horoscope.dart';
 import '../models/HoroscopeDetails.dart';
+import '../models/Tag.dart';
+import '../widgets/HoroscopeTag.dart';
+import '../widgets/HoroscopeTagButton.dart';
 
-class HoroscopeInterpretationPage extends StatelessWidget {
+class HoroscopeInterpretationPage extends StatefulWidget {
   const HoroscopeInterpretationPage({super.key});
+
+  @override
+  State<HoroscopeInterpretationPage> createState() => _HoroscopeInterpretationPage();
+}
+
+class _HoroscopeInterpretationPage extends State<HoroscopeInterpretationPage> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  int _currentIndex = 0;
+
+  void onTabTapped(int index) {
+    if (index != _currentIndex) {
+      setState(() {
+        _currentIndex = index;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,77 +40,161 @@ class HoroscopeInterpretationPage extends StatelessWidget {
       length: 3,
       child: Scaffold(
         backgroundColor: Color.fromRGBO(24, 23, 39, 1.0),
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.only(top: 28.0, left: 4.0, right: 4.0),
-            child: FutureBuilder <HoroscopeDetails>(
-              future: apiService.getHoroscopeDetails(args),
-              builder: (context, snapshot) {
+        body: _currentIndex == 0 ? InterpretationScreen(apiService: apiService, horoscope: args,) : TagScreen(horoscope: args, apiService: apiService,),
+        bottomNavigationBar: Theme(
+          data: ThemeData(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent
+          ),
+          child: BottomNavigationBar(
+            backgroundColor: Color.fromRGBO(24, 23, 39, 1.0),
+            onTap: onTabTapped,
+            currentIndex: _currentIndex,
+            selectedItemColor: Colors.white,
+            unselectedItemColor: Colors.white54,
+
+            items: [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.comment_outlined,),
+                label: "Interpretation",
+              ),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.tag,),
+                  label: "Interpretation"
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class InterpretationScreen extends StatelessWidget {
+  final APIService apiService;
+  final Horoscope horoscope;
+  const InterpretationScreen({super.key, required this.apiService, required this.horoscope});
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 28.0, left: 4.0, right: 4.0),
+        child: FutureBuilder <HoroscopeDetails>(
+            future: apiService.getHoroscopeDetails(horoscope),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting ||
+                  snapshot.hasError ||
+                  !snapshot.hasData ||
+                  (snapshot.data is List && (snapshot.data as List).isEmpty)) {
+                return Skelton();
+              } else {
+                HoroscopeDetails horoscopeDetails = snapshot.data!;
+                return Column(
+                  children: [
+                    Center(
+                      child: LayoutBuilder(
+                          builder: (BuildContext context, BoxConstraints constraints) {
+                            double imageWidth = constraints.maxWidth * 0.6;
+                            return Image.asset("assets/images/scorpio_interpretation.png", width: imageWidth, fit: BoxFit.cover,);
+                          }
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(horoscope.symbolChar, style: TextStyle(fontFamily: 'GeZodiac', fontSize: 22, color: Colors.white70),),
+                              SizedBox(width: 6,),
+                              Text(horoscope.name, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.white70),)
+                            ],
+                          ),
+                          TabBar(
+                              labelColor: Colors.white70,
+                              indicatorColor: Colors.white70,
+                              dividerColor: Colors.transparent,
+                              splashFactory: NoSplash.splashFactory,
+                              overlayColor: WidgetStateProperty.resolveWith((states) => Colors.transparent),
+                              tabs: [
+                                Tab(text: "TODAY",),
+                                Tab(text: "TOMORROW",),
+                                Tab(text: "WEEKLY",)
+                              ]),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      flex: 4,
+                      child: TabBarView(
+                        children: [
+                          TodayTab(horoscopeDetails: horoscopeDetails),
+                          TomorrowTab(horoscopeDetails: horoscopeDetails),
+                          WeeklyTab(horoscopeDetails: horoscopeDetails),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 20,),
+                  ],
+                );
+              }
+            }
+        ),
+      ),
+    );
+  }
+}
+
+class TagScreen extends StatelessWidget {
+  final Horoscope horoscope;
+  final APIService apiService;
+  const TagScreen({super.key, required this.horoscope, required this.apiService});
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 28.0, left: 4.0, right: 4.0),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(horoscope.symbolChar, style: TextStyle(fontFamily: 'GeZodiac', fontSize: 24, color: Colors.white),),
+                SizedBox(width: 9,),
+                Text(horoscope.name, style: TextStyle(fontSize: 32, fontWeight: FontWeight.w400, color: Colors.white),)
+              ],
+            ),
+            FutureBuilder(
+                future: apiService.getTags(),
+                builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting ||
                       snapshot.hasError ||
                       !snapshot.hasData ||
                       (snapshot.data is List && (snapshot.data as List).isEmpty)) {
-                    return Skelton();
-                  } else {
-                    HoroscopeDetails horoscopeDetails = snapshot.data!;
-                    return Column(
-                      children: [
-                        Center(
-                          child: LayoutBuilder(
-                              builder: (BuildContext context, BoxConstraints constraints) {
-                                double imageWidth = constraints.maxWidth * 0.8;
-                                return Image.asset("assets/images/scorpio_interpretation.png", width: imageWidth, fit: BoxFit.cover,);
-                              }
-                          ),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(args.symbolChar, style: TextStyle(fontFamily: 'GeZodiac', fontSize: 22, color: Colors.white70),),
-                                  SizedBox(width: 6,),
-                                  Text(args.name, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w300, color: Colors.white70),)
-                                ],
-                              ),
-                              TabBar(
-                                  labelColor: Colors.white70,
-                                  indicatorColor: Colors.white70,
-                                  dividerColor: Colors.transparent,
-                                  splashFactory: NoSplash.splashFactory,
-                                  overlayColor: WidgetStateProperty.resolveWith((states) => Colors.transparent),
-                                  tabs: [
-                                    Tab(text: "TODAY",),
-                                    Tab(text: "TOMORROW",),
-                                    Tab(text: "WEEKLY",)
-                                  ]),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          flex: 4,
-                          child: TabBarView(
-                            children: [
-                              TodayTab(horoscopeDetails: horoscopeDetails),
-                              TomorrowTab(horoscopeDetails: horoscopeDetails),
-                              WeeklyTab(horoscopeDetails: horoscopeDetails),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 20,),
-                      ],
+                    return ListView.separated(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) => Text("!!!", style: TextStyle(color: Colors.white),),
+                      separatorBuilder: (context, index) => const SizedBox(),
+                      itemCount: 6,
                     );
+                  } else {
+                    List<Tag> tags = snapshot.data!;
+                    return HoroscopeTag(selectedHoroscope: horoscope, tags: tags,);
                   }
                 }
-              ),
-            ),
-          ),
+            )
+          ],
         ),
-      );
+      ),
+    );
   }
 }
+
+
 
 class TodayTab extends StatelessWidget {
   final HoroscopeDetails horoscopeDetails;

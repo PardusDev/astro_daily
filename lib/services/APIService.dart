@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:astro_daily/models/HoroscopeDetails.dart';
 import 'package:http/http.dart' as http;
 import '../models/Horoscope.dart';
+import '../models/Tag.dart';
 
 class APIService {
   final String apiUrl;
@@ -27,6 +28,17 @@ class APIService {
       return HoroscopeDetails.fromJson(jsonDecode(response.body), existingHoroscope);
     } else {
       throw Exception('Failed to load horoscope details data.');
+    }
+  }
+
+  Future<List<Tag>> getTags() async {
+    final String uri = "$apiUrl/getTags";
+    final response = await http.get(Uri.parse(uri));
+    if (response.statusCode == 200) {
+      final List<dynamic> json = jsonDecode(response.body);
+      return Tag.fromJsonList(json);
+    } else {
+      throw Exception('Failed to load horoscope data.');
     }
   }
 }
