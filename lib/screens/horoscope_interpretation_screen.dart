@@ -60,7 +60,7 @@ class _HoroscopeInterpretationPage extends State<HoroscopeInterpretationPage> {
               ),
               BottomNavigationBarItem(
                   icon: Icon(Icons.tag,),
-                  label: "Interpretation"
+                  label: "Tags"
               )
             ],
           ),
@@ -147,53 +147,6 @@ class InterpretationScreen extends StatelessWidget {
   }
 }
 
-class TagScreen extends StatelessWidget {
-  final Horoscope horoscope;
-  final APIService apiService;
-  const TagScreen({super.key, required this.horoscope, required this.apiService});
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 28.0, left: 4.0, right: 4.0),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(horoscope.symbolChar, style: TextStyle(fontFamily: 'GeZodiac', fontSize: 24, color: Colors.white),),
-                SizedBox(width: 9,),
-                Text(horoscope.name, style: TextStyle(fontSize: 32, fontWeight: FontWeight.w400, color: Colors.white),)
-              ],
-            ),
-            FutureBuilder(
-                future: apiService.getTags(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting ||
-                      snapshot.hasError ||
-                      !snapshot.hasData ||
-                      (snapshot.data is List && (snapshot.data as List).isEmpty)) {
-                    return ListView.separated(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) => Text("!!!", style: TextStyle(color: Colors.white),),
-                      separatorBuilder: (context, index) => const SizedBox(),
-                      itemCount: 6,
-                    );
-                  } else {
-                    List<Tag> tags = snapshot.data!;
-                    return HoroscopeTag(selectedHoroscope: horoscope, tags: tags,);
-                  }
-                }
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 
 
 class TodayTab extends StatelessWidget {
@@ -210,10 +163,10 @@ class TodayTab extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       child: SingleChildScrollView(
         child: RichText(
-          text: TextSpan(text: formattedDate, style: TextStyle(fontSize: 16, color: Colors.white), children: <TextSpan>[
-            TextSpan(text: " - ", style: TextStyle(fontSize: 16, color: Colors.white60)),
-            TextSpan(text: horoscopeDetails.todayText, style: TextStyle(fontSize: 16, color: Colors.white60))
-          ])
+            text: TextSpan(text: formattedDate, style: TextStyle(fontSize: 16, color: Colors.white), children: <TextSpan>[
+              TextSpan(text: " - ", style: TextStyle(fontSize: 16, color: Colors.white60)),
+              TextSpan(text: horoscopeDetails.todayText, style: TextStyle(fontSize: 16, color: Colors.white60))
+            ])
         ),
       ),
     );
@@ -228,7 +181,7 @@ class TomorrowTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String formattedDate = DateFormat('MMM dd, yyyy').format(DateTime.now().add(Duration(days: 1)));
-    
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: SingleChildScrollView(
@@ -307,6 +260,96 @@ class Skelton extends StatelessWidget {
 }
 
 // **#** END of SKELTON SECTION **#**
+
+
+
+// TagScreen Section
+
+class TagScreen extends StatelessWidget {
+  final Horoscope horoscope;
+  final APIService apiService;
+  const TagScreen({super.key, required this.horoscope, required this.apiService});
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 28.0, left: 4.0, right: 4.0),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(horoscope.symbolChar, style: TextStyle(fontFamily: 'GeZodiac', fontSize: 24, color: Colors.white),),
+                SizedBox(width: 9,),
+                Text(horoscope.name, style: TextStyle(fontSize: 32, fontWeight: FontWeight.w400, color: Colors.white),)
+              ],
+            ),
+            SizedBox(height: 12,),
+            FutureBuilder(
+                future: apiService.getTags(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting ||
+                      snapshot.hasError ||
+                      !snapshot.hasData ||
+                      (snapshot.data is List && (snapshot.data as List).isEmpty)) {
+                    return Container(
+                      width: 340,
+                      child: ListView.separated(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) => TagSkelton(width: 340, height: 80,),
+                        separatorBuilder: (context, index) => const SizedBox(height: 12,),
+                        itemCount: 6,
+                      ),
+                    );
+                  } else {
+                    List<Tag> tags = snapshot.data!;
+                    return HoroscopeTag(selectedHoroscope: horoscope, tags: tags,);
+                  }
+                }
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class TagSkelton extends StatelessWidget {
+  const TagSkelton({
+    Key? key, this.height, this.width,
+  }) : super(key: key);
+
+  final double? height, width;
+
+  @override
+  Widget build (BuildContext context) {
+    return Container(
+      height: height,
+      width: width,
+      padding: const EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.04),
+          borderRadius: const BorderRadius.all(Radius.circular(16))
+      ),
+      child: Row(
+        children: [
+          Container(width: 80, height: 60, padding: EdgeInsets.all(24), decoration: BoxDecoration(color: Colors.white.withOpacity(0.04), borderRadius: BorderRadius.all(Radius.circular(16))),),
+          SizedBox(width: 12,),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Container(width: 60, height: 16, padding: EdgeInsets.all(24), decoration: BoxDecoration(color: Colors.white.withOpacity(0.04), borderRadius: BorderRadius.all(Radius.circular(16))),),
+              Container(width: 160, height: 16, padding: EdgeInsets.all(24), decoration: BoxDecoration(color: Colors.white.withOpacity(0.04), borderRadius: BorderRadius.all(Radius.circular(16))),),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}
 
 
 
