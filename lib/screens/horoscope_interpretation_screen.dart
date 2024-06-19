@@ -275,41 +275,45 @@ class TagScreen extends StatelessWidget {
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.only(top: 28.0, left: 4.0, right: 4.0),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(horoscope.symbolChar, style: TextStyle(fontFamily: 'GeZodiac', fontSize: 24, color: Colors.white),),
-                SizedBox(width: 9,),
-                Text(horoscope.name, style: TextStyle(fontSize: 32, fontWeight: FontWeight.w400, color: Colors.white),)
-              ],
-            ),
-            SizedBox(height: 12,),
-            FutureBuilder(
-                future: apiService.getTags(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting ||
-                      snapshot.hasError ||
-                      !snapshot.hasData ||
-                      (snapshot.data is List && (snapshot.data as List).isEmpty)) {
-                    return Container(
-                      width: 340,
-                      child: ListView.separated(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, index) => TagSkelton(width: 340, height: 80,),
-                        separatorBuilder: (context, index) => const SizedBox(height: 12,),
-                        itemCount: 6,
-                      ),
-                    );
-                  } else {
-                    List<Tag> tags = snapshot.data!;
-                    return HoroscopeTag(selectedHoroscope: horoscope, tags: tags,);
+        child: SingleChildScrollView(
+          physics: ScrollPhysics(),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(horoscope.symbolChar, style: TextStyle(fontFamily: 'GeZodiac', fontSize: 24, color: Colors.white),),
+                  SizedBox(width: 9,),
+                  Text(horoscope.name, style: TextStyle(fontSize: 32, fontWeight: FontWeight.w400, color: Colors.white),)
+                ],
+              ),
+              SizedBox(height: 12,),
+              FutureBuilder(
+                  future: apiService.getTags(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting ||
+                        snapshot.hasError ||
+                        !snapshot.hasData ||
+                        (snapshot.data is List && (snapshot.data as List).isEmpty)) {
+                      return Container(
+                        width: 340,
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) => TagSkelton(width: 340, height: 80,),
+                          separatorBuilder: (context, index) => const SizedBox(height: 12,),
+                          itemCount: 10,
+                        ),
+                      );
+                    } else {
+                      List<Tag> tags = snapshot.data!;
+                      return HoroscopeTag(selectedHoroscope: horoscope, tags: tags,);
+                    }
                   }
-                }
-            )
-          ],
+              ),
+              SizedBox(height: 25,)
+            ],
+          ),
         ),
       ),
     );

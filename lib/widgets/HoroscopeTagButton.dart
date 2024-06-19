@@ -27,16 +27,18 @@ class HoroscopeTagButton extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(Icons.control_point_rounded, color: Colors.white70,),
+            Image.asset(tag.assetPath, color: Colors.white, height: 40,),
             SizedBox(width: 20,),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(tag.name, style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700),),
-                SizedBox(height: 1,),
-                Text(tag.description, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.white70, fontWeight: FontWeight.w500))
-              ],
+            Flexible(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(tag.name, style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700),),
+                  SizedBox(height: 1,),
+                  Text(tag.description, overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.white70, fontWeight: FontWeight.w500))
+                ],
+              ),
             )
           ],
         ),
