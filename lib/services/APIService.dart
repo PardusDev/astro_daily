@@ -4,6 +4,7 @@ import 'package:astro_daily/models/HoroscopeDetails.dart';
 import 'package:http/http.dart' as http;
 import '../models/Horoscope.dart';
 import '../models/Tag.dart';
+import '../models/TagDetails.dart';
 
 class APIService {
   final String apiUrl;
@@ -39,6 +40,16 @@ class APIService {
       return Tag.fromJsonList(json);
     } else {
       throw Exception('Failed to load horoscope data.');
+    }
+  }
+
+  Future<TagDetails> getTagDetail(Horoscope existingHoroscope, Tag existingTag) async {
+    final String uri = "$apiUrl/getTagDetail?horoscopeId=${existingHoroscope.id}&tagId=${existingTag.id}";
+    final response = await http.get(Uri.parse(uri));
+    if (response.statusCode == 200) {
+      return TagDetails.fromJson(jsonDecode(response.body), existingTag, existingHoroscope);
+    } else {
+      throw Exception('Failed to load horoscope details data.');
     }
   }
 }

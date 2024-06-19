@@ -15,7 +15,7 @@ class HoroscopeTagButton extends StatelessWidget {
       height: 60,
       child: ElevatedButton(
         onPressed: () {
-
+          Navigator.pushNamed(context, '/TagDetail', arguments: {'existingHoroscope': selectedHoroscope, 'existingTag': tag});
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.transparent,
