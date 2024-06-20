@@ -45,3 +45,10 @@ This repository is licensed under the MIT License, allowing you to freely use, m
 ### Tag Detail Screen
 <img src="/screenshots/TagDetailScreen.png" alt="Screenshot from App" width="300" />
 <br><br>
+
+## Contact
+
+You can reach me at:
+
+- **Email:** [rustemavci@hotmail.com.tr](mailto:rustemavci@hotmail.com.tr)
+- **LinkedIn:** [LinkedIn](https://www.linkedin.com/in/rüstem-avcı)
