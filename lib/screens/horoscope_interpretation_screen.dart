@@ -34,7 +34,7 @@ class _HoroscopeInterpretationPage extends State<HoroscopeInterpretationPage> {
   @override
   Widget build(BuildContext context) {
     final Horoscope args = ModalRoute.of(context)!.settings.arguments as Horoscope;
-    APIService apiService = new APIService(apiUrl: "http://10.0.2.2:3000");
+    APIService apiService = new APIService();
 
     return DefaultTabController(
       length: 3,

@@ -10,7 +10,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    APIService apiService = new APIService(apiUrl: "http://10.0.2.2:3000");
+    APIService apiService = new APIService();
     return Scaffold(
       backgroundColor: Color.fromRGBO(24,23,39, 1.0),
       body: SafeArea(

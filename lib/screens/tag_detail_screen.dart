@@ -13,7 +13,7 @@ class TagDetailScreen extends StatelessWidget {
     final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     final Horoscope existingHoroscope = args['existingHoroscope'];
     final Tag existingTag = args['existingTag'];
-    APIService apiService = new APIService(apiUrl: "http://10.0.2.2:3000");
+    APIService apiService = new APIService();
 
     return Scaffold(
       backgroundColor: Color.fromRGBO(24, 23, 39, 1.0),

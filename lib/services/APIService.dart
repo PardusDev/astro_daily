@@ -7,9 +7,7 @@ import '../models/Tag.dart';
 import '../models/TagDetails.dart';
 
 class APIService {
-  final String apiUrl;
-
-  APIService({required this.apiUrl});
+  String apiUrl = "http://10.0.2.2:3000";
 
   Future<List<Horoscope>> getHoroscopes() async {
     final String uri = "$apiUrl/getHoroscopes";
